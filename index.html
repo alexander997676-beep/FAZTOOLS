@@ -3,128 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAZ TOOLS | Quantum Sphere</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+    <title>FAZ TOOLS | HYPERION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;500;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         /* --- 1. CORE VARIABLES --- */
         :root {
-            --bg-deep: #020204;
-            --glass: rgba(20, 25, 35, 0.6);
-            --border: rgba(255, 255, 255, 0.1);
-            --primary: #00f3ff; /* Default Cyan */
+            --bg-color: #050505;
+            --card-bg: #0f1014;
+            --primary: #00f2ff; /* Cyan */
+            --secondary: #bd00ff; /* Purple */
+            --accent: #ff0055; /* Pink */
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
         }
-
-        /* Color Themes */
-        body.theme-purple { --primary: #bc13fe; }
-        body.theme-green { --primary: #00ff88; }
-        body.theme-orange { --primary: #ff9d00; }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Chakra Petch', sans-serif;
             cursor: default;
         }
 
         body {
-            background-color: var(--bg-deep);
+            background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-image: radial-gradient(circle at 50% -20%, rgba(0, 243, 255, 0.1) 0%, transparent 50%);
+            /* Hexagon Pattern Background */
+            background-image: 
+                linear-gradient(30deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+                linear-gradient(150deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+                linear-gradient(30deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+                linear-gradient(150deg, #0a0a0a 12%, transparent 12.5%, transparent 87%, #0a0a0a 87.5%, #0a0a0a),
+                radial-gradient(circle at 50% 0%, #1a1a2e 0%, #000 70%);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0;
         }
 
-        /* --- 2. 3D ROTATING SPHERE (Pure CSS) --- */
-        .sphere-container {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 600px;
-            z-index: -1;
-            perspective: 1000px;
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border: 1px solid var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 20px var(--primary);
-        }
-
-        .r1 { width: 100%; height: 100%; animation: rotate1 10s linear infinite; }
-        .r2 { width: 80%; height: 80%; animation: rotate2 15s linear infinite; border-color: rgba(255,255,255,0.3); }
-        .r3 { width: 60%; height: 60%; animation: rotate1 20s linear infinite reverse; }
-
-        @keyframes rotate1 { 0% {transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg);} 100% {transform: translate(-50%, -50%) rotateX(360deg) rotateY(360deg);} }
-        @keyframes rotate2 { 0% {transform: translate(-50%, -50%) rotateX(0deg) rotateY(90deg);} 100% {transform: translate(-50%, -50%) rotateX(360deg) rotateY(450deg);} }
-
-        /* --- 3. HEADER & HUD --- */
+        /* --- 2. HEADER HUD --- */
         header {
-            width: 100%;
+            width: 90%;
             max-width: 1200px;
-            padding: 20px;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 100;
         }
 
-        .system-logo h1 {
-            font-family: 'Orbitron';
+        .brand h1 {
             font-size: 1.8rem;
+            font-weight: 700;
             letter-spacing: 2px;
-            color: #fff;
-            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
         }
-        .system-logo span { color: var(--primary); }
 
-        .top-controls {
+        .status-bar {
             display: flex;
-            gap: 15px;
-            align-items: center;
+            gap: 20px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
         }
 
-        .settings-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .settings-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary); }
-
-        /* --- 4. HERO CLOCK --- */
+        /* --- 3. HERO CLOCK SECTION --- */
         .hero {
             text-align: center;
             margin: 60px 0 40px;
+            position: relative;
+        }
+
+        .clock-container {
+            position: relative;
+            display: inline-block;
         }
 
         .main-clock {
-            font-family: 'Orbitron';
             font-size: 5rem;
             font-weight: 700;
             color: white;
-            text-shadow: 0 0 30px var(--primary);
+            text-shadow: 0 0 20px var(--primary);
             line-height: 1;
         }
 
@@ -132,317 +104,344 @@
             font-size: 1.2rem;
             color: var(--text-muted);
             letter-spacing: 4px;
-            margin-top: 10px;
             text-transform: uppercase;
+            margin-top: 10px;
         }
 
-        .format-badge {
+        .toggle-btn {
             margin-top: 20px;
-            display: inline-block;
-            padding: 6px 15px;
+            background: transparent;
             border: 1px solid var(--primary);
             color: var(--primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 8px 24px;
+            border-radius: 4px;
+            font-family: 'Rajdhani';
             font-weight: 700;
+            letter-spacing: 2px;
             cursor: pointer;
             transition: 0.3s;
-        }
-        .format-badge:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
-
-        /* --- 5. SETTINGS PANEL (Hidden) --- */
-        .settings-panel {
-            position: fixed;
-            top: 80px; right: 20px;
-            width: 250px;
-            background: rgba(10, 15, 20, 0.95);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
-            z-index: 200;
-            transform: translateX(300px);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(20px);
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
 
-        .settings-panel.open { transform: translateX(0); }
-
-        .panel-title { font-family: 'Orbitron'; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        
-        .color-options { display: flex; gap: 10px; margin-top: 10px; }
-        .color-dot {
-            width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;
+        .toggle-btn:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary);
         }
-        .color-dot:hover { transform: scale(1.2); }
 
-        /* --- 6. QUANTUM GRID --- */
+        /* --- 4. HYPERION GRID --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
             width: 90%;
             max-width: 1400px;
-            padding-bottom: 120px;
+            padding-bottom: 100px;
         }
 
-        .q-card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
+        /* CARD DESIGN WITH LIQUID BORDER */
+        .h-card {
             position: relative;
-            overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 15px;
             text-decoration: none;
-            transition: 0.3s;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 180px;
+            transition: transform 0.3s ease;
+            z-index: 1;
         }
 
-        .q-card:hover {
+        /* The Liquid Border Animation */
+        .h-card::before {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(
+                transparent, 
+                var(--primary), 
+                transparent 30%
+            );
+            animation: rotate 4s linear infinite;
+            z-index: -2;
+        }
+
+        /* Inner Black Background to create border look */
+        .h-card::after {
+            content: "";
+            position: absolute;
+            inset: 2px; /* Border width */
+            background: var(--card-bg);
+            border-radius: 13px;
+            z-index: -1;
+        }
+
+        .h-card:hover {
             transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
         }
 
-        /* Audio Wave Animation inside card */
-        .wave-box {
+        /* Card Content */
+        .card-inner {
+            position: relative;
+            padding: 20px;
+            z-index: 2;
+            height: 100%;
             display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 20px;
-            opacity: 0.5;
+            flex-direction: column;
         }
-        .bar { width: 4px; background: var(--primary); animation: wave 1s infinite ease-in-out; }
-        .bar:nth-child(2) { animation-delay: 0.1s; }
-        .bar:nth-child(3) { animation-delay: 0.2s; }
-        .bar:nth-child(4) { animation-delay: 0.3s; }
 
-        @keyframes wave { 0%, 100% {height: 5px;} 50% {height: 20px;} }
-
-        /* --- ICON BOX STYLING (FULL PICTURE MODE) --- */
-        .icon-box {
+        /* FULL IMAGE CONTAINER */
+        .img-container {
             width: 100%;
-            height: 120px; /* Bigger height for visibility */
-            margin-bottom: 15px;
-            border-radius: 12px;
-            overflow: hidden;
+            height: 150px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.02);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
         }
-        
-        .icon-box img {
+
+        .img-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Ensures full picture is visible */
-            border-radius: 8px;
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+            object-fit: contain; /* CRITICAL: Ensures full image shows */
+            transition: transform 0.3s;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
         }
-        
-        .q-card h3 { color: #fff; font-size: 1.3rem; margin-bottom: 5px; }
-        .q-card p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* Notification Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: var(--primary);
-            color: #000;
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-weight: 700;
-            opacity: 0;
-            pointer-events: none;
+        .h-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .text-content h3 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .text-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Launch Button */
+        .launch-icon {
+            align-self: flex-end;
+            margin-top: auto;
+            color: var(--primary);
+            font-size: 1.5rem;
+            opacity: 0.5;
             transition: 0.3s;
-            z-index: 1000;
-            box-shadow: 0 0 20px var(--primary);
         }
-        .toast.show { opacity: 1; bottom: 50px; }
+        .h-card:hover .launch-icon {
+            opacity: 1;
+            transform: translateX(5px);
+            text-shadow: 0 0 10px var(--primary);
+        }
 
-        /* Mobile */
+        @keyframes rotate { 100% {transform: rotate(360deg);} }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            color: #555;
+            background: #000;
+        }
+
         @media (max-width: 600px) {
             .main-clock { font-size: 4rem; }
             .grid { grid-template-columns: 1fr; }
-            .sphere-container { width: 300px; height: 300px; top: 50px; }
+            .status-bar { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 3D Background Sphere -->
-    <div class="sphere-container">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
-    </div>
-
-    <!-- Header -->
+    <!-- Header HUD -->
     <header>
-        <div class="system-logo"><h1>FAZ<span>TOOLS</span></h1></div>
-        <div class="top-controls">
-            <div id="battery">🔋 100%</div>
-            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+        <div class="brand">
+            <h1>FAZ TOOLS <span style="font-size:0.9rem; color:var(--primary);">PRO</span></h1>
+        </div>
+        <div class="status-bar">
+            <span id="battery">PWR: 100%</span>
+            <span>NET: SECURE</span>
         </div>
     </header>
 
-    <!-- Settings Panel -->
-    <div class="settings-panel" id="settingsPanel">
-        <div class="panel-title">SYSTEM THEME</div>
-        <p style="color:#aaa; font-size:0.8rem;">Select Accent Color:</p>
-        <div class="color-options">
-            <div class="color-dot" style="background: #00f3ff;" onclick="setTheme('cyan')"></div>
-            <div class="color-dot" style="background: #bc13fe;" onclick="setTheme('purple')"></div>
-            <div class="color-dot" style="background: #00ff88;" onclick="setTheme('green')"></div>
-            <div class="color-dot" style="background: #ff9d00;" onclick="setTheme('orange')"></div>
-        </div>
-        <div class="panel-title" style="margin-top:20px;">SYSTEM STATUS</div>
-        <p style="color:#0f0; font-size:0.8rem;">● Online</p>
-    </div>
-
-    <!-- Hero Clock -->
+    <!-- Clock Section -->
     <div class="hero">
-        <div class="main-clock" id="clock">00:00:00</div>
-        <div class="date-display" id="date">JAN 01, 2024</div>
-        <button class="format-badge" id="fmtBtn" onclick="toggleFormat()">TIME FORMAT: 12H</button>
+        <div class="clock-container">
+            <div class="main-clock" id="clock">00:00:00</div>
+        </div>
+        <div class="date-display" id="date">JANUARY 1, 2024</div>
+        <button class="toggle-btn" id="fmtBtn" onclick="toggleFormat()">SWITCH TO 12H</button>
     </div>
-
-    <!-- Notification Toast -->
-    <div class="toast" id="toast">Launching Application...</div>
 
     <!-- Main Grid -->
     <main class="grid">
 
         <!-- Tool 1: Gallery Agency -->
-        <a href="https://galary-agency.vercel.app/" target="_blank" class="q-card" onclick="showToast('Gallery Agency')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/c5edbe67-8d19-44c6-8f55-c0c7fd425cd7.png" alt="Gallery">
+        <a href="https://galary-agency.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/c5edbe67-8d19-44c6-8f55-c0c7fd425cd7.png" alt="Gallery">
+                </div>
+                <div class="text-content">
+                    <h3>Gallery Agency</h3>
+                    <p>AI Neural Imagery.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Gallery Agency</h3>
-                <p>AI Neural Imagery</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 2: Movie Land -->
-        <a href="https://movie-land-1.vercel.app/" target="_blank" class="q-card" onclick="showToast('Movie Land')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/bc4c5801-1584-4f0a-a232-85a296cb23a0.png" alt="Movies">
+        <a href="https://movie-land-1.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/bc4c5801-1584-4f0a-a232-85a296cb23a0.png" alt="Movies">
+                </div>
+                <div class="text-content">
+                    <h3>Movie Land</h3>
+                    <p>Cinematic Database.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Movie Land</h3>
-                <p>Cinema Database</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 3: Live Streams -->
-        <a href="https://ai-spech.vercel.app/" target="_blank" class="q-card" onclick="showToast('Live Streams')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/2a040c5e-4459-44f0-aa81-9e9224de0e77.jpg" alt="Live Streams">
+        <a href="https://ai-spech.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/2a040c5e-4459-44f0-aa81-9e9224de0e77.jpg" alt="Live">
+                </div>
+                <div class="text-content">
+                    <h3>Live Streams</h3>
+                    <p>Broadcast Uplink.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Live Streams</h3>
-                <p>Broadcast Uplink</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 4: Faz Store -->
-        <a href="https://fazstore-three.vercel.app/" target="_blank" class="q-card" onclick="showToast('Faz Store')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/0119868e-3a6f-4ee2-b2a6-7fc5f5c091f7.png" alt="Store">
+        <a href="https://fazstore-three.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/0119868e-3a6f-4ee2-b2a6-7fc5f5c091f7.png" alt="Store">
+                </div>
+                <div class="text-content">
+                    <h3>Faz Store</h3>
+                    <p>App Repository.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Faz Store</h3>
-                <p>App Repository</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
-        <!-- Tool 5: Faz Info -->
-        <a href="https://fazinfo.vercel.app/" target="_blank" class="q-card" onclick="showToast('Mobile Info')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/789f62b1-efd5-4eb8-a77a-dec9c772b9f0.png" alt="Info">
+        <!-- Tool 5: Mobile Info -->
+        <a href="https://fazinfo.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/789f62b1-efd5-4eb8-a77a-dec9c772b9f0.png" alt="Info">
+                </div>
+                <div class="text-content">
+                    <h3>Mobile Info</h3>
+                    <p>Hardware Specs.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Mobile Info</h3>
-                <p>Hardware Specs</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 6: Global Radio -->
-        <a href="https://radio-one-mu.vercel.app" target="_blank" class="q-card" onclick="showToast('Global Radio')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/58d9c279-412b-4f6d-9d8c-ce1879e14cf0.jpg" alt="Radio">
+        <a href="https://radio-one-mu.vercel.app" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/58d9c279-412b-4f6d-9d8c-ce1879e14cf0.jpg" alt="Radio">
+                </div>
+                <div class="text-content">
+                    <h3>Global Radio</h3>
+                    <p>Frequency Tuner.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Global Radio</h3>
-                <p>Frequency Tuner</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 7: Zoo Tube -->
-        <a href="https://zoo-tube.vercel.app" target="_blank" class="q-card" onclick="showToast('Zoo Tube')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/413372de-b4e8-4f5f-93d1-3a04295e3963.png" alt="ZooTube">
+        <a href="https://zoo-tube.vercel.app" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/413372de-b4e8-4f5f-93d1-3a04295e3963.png" alt="ZooTube">
+                </div>
+                <div class="text-content">
+                    <h3>Zoo Tube</h3>
+                    <p>Video Protocol.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Zoo Tube</h3>
-                <p>Video Protocol</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 8: Cyber Racing -->
-        <a href="https://cyber-omega1.vercel.app/" target="_blank" class="q-card" onclick="showToast('Cyber Racing')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/d34f416f-3b89-4506-8e4e-3e835a1823bf.png" alt="Cyber">
+        <a href="https://cyber-omega1.vercel.app/" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/d34f416f-3b89-4506-8e4e-3e835a1823bf.png" alt="Cyber">
+                </div>
+                <div class="text-content">
+                    <h3>Cyber Racing</h3>
+                    <p>Simulation Engine.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Cyber Racing</h3>
-                <p>Simulation Engine</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 9: Music Player -->
-        <a href="https://music-player0.vercel.app" target="_blank" class="q-card" onclick="showToast('Music Player')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/6eac9ec6-9f34-4094-a810-5318a50befea.png" alt="Music">
+        <a href="https://music-player0.vercel.app" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/6eac9ec6-9f34-4094-a810-5318a50befea.png" alt="Music">
+                </div>
+                <div class="text-content">
+                    <h3>Music Player</h3>
+                    <p>Audio Core.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Music Player</h3>
-                <p>Hi-Res Audio</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
         <!-- Tool 10: 9th Library -->
-        <a href="https://libary-no1.vercel.app" target="_blank" class="q-card" onclick="showToast('Library')">
-            <div class="icon-box">
-                <img src="https://i.supaimg.com/98954a0c-e04b-4b63-bb06-0651baa74a69.png" alt="Library">
+        <a href="https://libary-no1.vercel.app" target="_blank" class="h-card">
+            <div class="card-inner">
+                <div class="img-container">
+                    <img src="https://i.supaimg.com/98954a0c-e04b-4b63-bb06-0651baa74a69.png" alt="Library">
+                </div>
+                <div class="text-content">
+                    <h3>9th Library</h3>
+                    <p>Data Archive.</p>
+                </div>
+                <div class="launch-icon">➔</div>
             </div>
-            <div>
-                <h3>Library</h3>
-                <p>Data Archive</p>
-            </div>
-            <div class="wave-box"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
         </a>
 
     </main>
 
+    <footer>
+        <p>SYSTEM OPTIMIZED // © 2024 FAZ TOOLS</p>
+    </footer>
+
     <script>
-        // --- 1. CLOCK & FORMAT ---
+        // --- CLOCK LOGIC ---
         let is24Hour = false;
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
-        const fmtBtn = document.getElementById('fmtBtn');
+        const btnEl = document.getElementById('fmtBtn');
 
         function updateTime() {
             const now = new Date();
@@ -466,36 +465,16 @@
 
         function toggleFormat() {
             is24Hour = !is24Hour;
-            fmtBtn.innerText = is24Hour ? "TIME FORMAT: 24H" : "TIME FORMAT: 12H";
+            btnEl.innerText = is24Hour ? "SWITCH TO 12H" : "SWITCH TO 24H";
             updateTime();
         }
         setInterval(updateTime, 1000);
         updateTime();
 
-        // --- 2. SETTINGS PANEL (THEME) ---
-        function toggleSettings() {
-            document.getElementById('settingsPanel').classList.toggle('open');
-        }
-
-        function setTheme(theme) {
-            document.body.className = ''; // Reset
-            if(theme !== 'cyan') document.body.classList.add(`theme-${theme}`);
-        }
-
-        // --- 3. TOAST NOTIFICATION ---
-        function showToast(appName) {
-            const toast = document.getElementById('toast');
-            toast.innerText = `ACCESSING: ${appName}...`;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-
-        // --- 4. BATTERY ---
+        // --- BATTERY ---
         if('getBattery' in navigator) {
             navigator.getBattery().then(bat => {
-                document.getElementById('battery').innerText = '🔋 ' + Math.round(bat.level * 100) + '%';
+                document.getElementById('battery').innerText = 'PWR: ' + Math.round(bat.level * 100) + '%';
             });
         }
     </script>
