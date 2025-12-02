@@ -3,34 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAZ SPATIAL OS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>FAZ OS | Quantum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. THEME VARIABLES --- */
+        /* --- 1. CONFIGURATION --- */
         :root {
-            /* DARK MODE (Default) */
-            --bg-color: #050505;
+            --bg-color: #030005;
+            --glass-surface: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6; /* Violet */
+            --secondary: #3b82f6; /* Blue */
+            --accent: #f43f5e; /* Rose */
             --text-main: #ffffff;
-            --text-muted: #a3a3a3;
-            --card-bg: rgba(30, 30, 30, 0.6);
-            --sidebar-bg: rgba(20, 20, 20, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --accent: #6366f1; /* Indigo */
-            --glow: rgba(99, 102, 241, 0.4);
-            --shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* LIGHT MODE OVERRIDES */
-        body.light-mode {
-            --bg-color: #e0e7ff;
-            --text-main: #1f2937;
-            --text-muted: #4b5563;
-            --card-bg: rgba(255, 255, 255, 0.6);
-            --sidebar-bg: rgba(255, 255, 255, 0.8);
-            --border: rgba(0, 0, 0, 0.05);
-            --accent: #4f46e5;
-            --glow: rgba(79, 70, 229, 0.2);
-            --shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
+            --text-muted: #94a3b8;
         }
 
         * {
@@ -38,7 +23,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+            cursor: none; /* Hide default cursor */
         }
 
         body {
@@ -47,472 +32,426 @@
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
-        }
-
-        /* --- 2. AMBIENT BACKGROUND --- */
-        .aurora-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.4;
-            border-radius: 50%;
-            animation: float 20s infinite alternate;
-        }
-        
-        .b1 { width: 60vw; height: 60vw; background: var(--accent); top: -20%; left: -10%; }
-        .b2 { width: 50vw; height: 50vw; background: #ec4899; bottom: -20%; right: -10%; animation-delay: -5s; }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(50px, 50px) rotate(20deg); }
-        }
-
-        /* Noise Texture */
-        .noise {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            opacity: 0.05;
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* --- 3. SIDEBAR NAVIGATION --- */
-        .sidebar {
-            width: 80px;
-            height: 96vh;
-            position: fixed;
-            left: 2vh; top: 2vh;
-            background: var(--sidebar-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px 0;
-            gap: 20px;
-            z-index: 100;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
         }
 
-        .nav-icon {
-            width: 50px; height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: 0.3s;
+        /* --- 2. CUSTOM CURSOR & TRAIL --- */
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
         }
 
-        .nav-icon:hover, .nav-icon.active {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 5px 15px var(--glow);
+        .cursor-trail {
+            width: 20px; height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
         }
 
-        .theme-toggle {
-            margin-top: auto;
-            background: rgba(128,128,128,0.2);
-            color: var(--text-main);
-        }
-
-        /* --- 4. MAIN CONTENT AREA --- */
-        .main-content {
-            margin-left: 100px; /* Space for sidebar */
-            width: calc(100% - 100px);
-            padding: 40px;
-            max-width: 1400px;
-        }
-
-        /* Header Section */
-        header {
+        /* --- 3. STATUS BAR (HUD) --- */
+        .status-bar {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: rgba(20, 20, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 50px;
+            animation: slideDown 1s ease;
         }
 
-        .user-welcome h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-
-        .user-welcome p {
+        .left-hud, .right-hud {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9rem;
             color: var(--text-muted);
         }
 
-        /* Spotlight Search */
-        .search-box {
-            position: relative;
-            z-index: 50;
+        .status-icon { font-size: 1rem; }
+        .live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
+
+        /* --- 4. HERO SECTION (Clock) --- */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
         }
 
-        .search-input {
-            padding: 15px 25px;
-            border-radius: 50px;
-            border: 1px solid var(--border);
-            background: var(--card-bg);
-            color: var(--text-main);
-            width: 300px;
-            font-size: 1rem;
-            outline: none;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-        }
-
-        .search-input:focus {
-            width: 400px;
-            border-color: var(--accent);
-            box-shadow: 0 0 30px var(--glow);
-        }
-
-        /* Dim overlay on search focus */
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.3s;
-            z-index: 40;
-        }
-        body.search-active .overlay { opacity: 1; pointer-events: all; }
-
-        /* --- 5. CLOCK WIDGET (Big Hero) --- */
-        .hero-clock {
-            display: flex;
-            align-items: flex-end;
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .time-digits {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 6rem;
+        .system-time {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 5rem;
             font-weight: 700;
             line-height: 1;
-            letter-spacing: -3px;
-            background: linear-gradient(180deg, var(--text-main), var(--text-muted));
+            background: linear-gradient(180deg, #fff, #888);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            cursor: pointer; /* Click to toggle */
         }
 
-        .clock-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-bottom: 10px;
-        }
-
-        .date-display {
-            font-size: 1.2rem;
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        .fmt-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 5px 15px;
+        .toggle-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
-            cursor: pointer;
             font-size: 0.8rem;
-            backdrop-filter: blur(10px);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
         }
+        .toggle-badge:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .fmt-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .date-display { font-size: 1.1rem; margin-top: 10px; color: var(--secondary); letter-spacing: 2px; text-transform: uppercase; }
 
-        /* --- 6. GRID SYSTEM --- */
+        /* --- 5. PARALLAX GRID --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
-            padding-bottom: 50px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px 20px 100px;
+            perspective: 1000px; /* Essential for 3D */
         }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
+        .q-card {
+            background: var(--glass-surface);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 25px;
-            text-decoration: none;
+            padding: 30px;
             position: relative;
+            text-decoration: none;
             overflow: hidden;
+            transition: transform 0.1s; /* Fast for tilt */
+            transform-style: preserve-3d; /* Key for parallax */
+            min-height: 200px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 200px;
-            backdrop-filter: blur(20px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: var(--shadow);
         }
 
-        .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: var(--accent);
-            background: var(--card-bg); /* Maintains transparency */
+        /* Hover Glow */
+        .q-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Content Parallax Layers */
+        .card-content {
+            transform: translateZ(20px); /* Moves closer to camera */
+            z-index: 2;
         }
 
         .icon-box {
-            width: 50px; height: 50px;
-            border-radius: 14px;
-            background: rgba(128,128,128,0.1);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            transform: translateZ(30px); /* Moves even closer */
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        .q-card h2 { color: white; font-size: 1.4rem; margin-bottom: 5px; }
+        .q-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+
+        /* Animated Action Button */
+        .action-arrow {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .card h3 {
-            font-size: 1.4rem;
-            color: var(--text-main);
-            margin-bottom: 5px;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Hover Effect Gradient */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at top right, var(--glow), transparent 50%);
-            opacity: 0;
+            align-self: flex-end;
+            transform: translateZ(25px);
             transition: 0.3s;
+            border: 1px solid transparent;
         }
-        .card:hover::before { opacity: 0.4; }
 
-        /* Mobile */
-        @media (max-width: 768px) {
-            .sidebar { 
-                width: 100%; height: 60px; 
-                flex-direction: row; 
-                justify-content: space-around;
-                top: auto; bottom: 0; left: 0; 
-                border-radius: 20px 20px 0 0;
-                padding: 0;
-            }
-            .main-content { margin-left: 0; width: 100%; padding: 20px; padding-bottom: 100px; }
-            .hero-clock { flex-direction: column; align-items: flex-start; gap: 5px; }
-            .time-digits { font-size: 4rem; }
-            header { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .search-input:focus { width: 100%; }
-            .search-input { width: 100%; }
+        .q-card:hover .action-arrow {
+            background: #fff;
+            color: #000;
+            transform: translateZ(40px) rotate(-45deg);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--glass-border);
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            color: #444;
+        }
+
+        @keyframes slideDown { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+        @media (max-width: 600px) {
+            .system-time { font-size: 3.5rem; }
+            .grid { grid-template-columns: 1fr; }
+            .status-bar { display: none; } /* Hide on very small screens */
         }
     </style>
 </head>
-<body id="body">
+<body>
 
-    <div class="aurora-bg">
-        <div class="blob b1"></div>
-        <div class="blob b2"></div>
-    </div>
-    <div class="noise"></div>
-    <div class="overlay"></div>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-trail" id="cursor-trail"></div>
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="nav-icon active">🏠</div>
-        <div class="nav-icon">⭐</div>
-        <div class="nav-icon">📂</div>
-        <button class="nav-icon theme-toggle" onclick="toggleTheme()" title="Toggle Day/Night Mode">☀</button>
-    </nav>
-
-    <div class="main-content">
-        
-        <header>
-            <div class="user-welcome">
-                <h1 id="greeting">Hello, User</h1>
-                <p>Welcome to your Spatial Workspace.</p>
-            </div>
-            
-            <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search applications...">
-            </div>
-        </header>
-
-        <!-- Huge Clock Section -->
-        <section class="hero-clock">
-            <div class="time-digits" id="clock">00:00:00</div>
-            <div class="clock-controls">
-                <div class="date-display" id="date">Jan 01, 2024</div>
-                <button class="fmt-btn" id="fmtBtn" onclick="toggleFormat()">Mode: 12H</button>
-            </div>
-        </section>
-
-        <!-- Tools Grid -->
-        <div class="grid" id="grid">
-
-            <!-- Tool 1 -->
-            <a href="https://galary-agency.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">🖼️</div>
-                <div>
-                    <h3>Gallery Agency</h3>
-                    <p>AI Imagery.</p>
-                </div>
-            </a>
-
-            <!-- Tool 2 -->
-            <a href="https://movie-land-1.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">🎬</div>
-                <div>
-                    <h3>Movie Land</h3>
-                    <p>Cinema Stream.</p>
-                </div>
-            </a>
-
-            <!-- Tool 3 -->
-            <a href="https://ai-spech.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">📡</div>
-                <div>
-                    <h3>Live Streams</h3>
-                    <p>TV Broadcasts.</p>
-                </div>
-            </a>
-
-            <!-- Tool 4 -->
-            <a href="https://fazstore-three.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">⚡</div>
-                <div>
-                    <h3>Faz Store</h3>
-                    <p>App Store.</p>
-                </div>
-            </a>
-
-            <!-- Tool 5 -->
-            <a href="https://fazinfo.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">📱</div>
-                <div>
-                    <h3>Mobile Info</h3>
-                    <p>Tech Specs.</p>
-                </div>
-            </a>
-
-            <!-- Tool 6 -->
-            <a href="https://radio-one-mu.vercel.app" target="_blank" class="card">
-                <div class="icon-box">📻</div>
-                <div>
-                    <h3>Global Radio</h3>
-                    <p>World Audio.</p>
-                </div>
-            </a>
-
-            <!-- Tool 7 -->
-            <a href="https://zoo-tube.vercel.app" target="_blank" class="card">
-                <div class="icon-box">▶️</div>
-                <div>
-                    <h3>Zoo Tube</h3>
-                    <p>Video Hub.</p>
-                </div>
-            </a>
-
-            <!-- Tool 8 -->
-            <a href="https://cyber-omega1.vercel.app/" target="_blank" class="card">
-                <div class="icon-box">🏎️</div>
-                <div>
-                    <h3>Cyber Racing</h3>
-                    <p>Game On.</p>
-                </div>
-            </a>
-
-            <!-- Tool 9 -->
-            <a href="https://music-player0.vercel.app" target="_blank" class="card">
-                <div class="icon-box">🎧</div>
-                <div>
-                    <h3>Music Player</h3>
-                    <p>Hi-Fi Audio.</p>
-                </div>
-            </a>
-
-            <!-- Tool 10 -->
-            <a href="https://libary-no1.vercel.app" target="_blank" class="card">
-                <div class="icon-box">📚</div>
-                <div>
-                    <h3>Library</h3>
-                    <p>Books.</p>
-                </div>
-            </a>
-
+    <!-- Status HUD -->
+    <div class="status-bar">
+        <div class="left-hud">
+            <span class="live-dot"></span>
+            <span>System Online</span>
+            <span>|</span>
+            <span id="battery">100% 🔋</span>
+        </div>
+        <div class="right-hud">
+            <span>📶 5G</span>
+            <span>📍 Pakistan</span>
         </div>
     </div>
 
+    <!-- Header Clock -->
+    <header>
+        <div class="system-time" id="clock">00:00:00</div>
+        <div class="date-display" id="date">JANUARY 1, 2024</div>
+        <br>
+        <div class="toggle-badge" id="fmtBtn" onclick="toggleFormat()">Time Format: 12H</div>
+    </header>
+
+    <!-- 3D Grid -->
+    <main class="grid" id="grid">
+
+        <!-- Tool 1 -->
+        <a href="https://galary-agency.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">🖼️</div>
+                <h2>Gallery Agency</h2>
+                <p>AI Neural Imagery.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 2 -->
+        <a href="https://movie-land-1.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">🎬</div>
+                <h2>Movie Land</h2>
+                <p>Cinematic Stream.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 3 -->
+        <a href="https://ai-spech.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">📡</div>
+                <h2>Live Streams</h2>
+                <p>TV Broadcast Uplink.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 4 -->
+        <a href="https://fazstore-three.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">⚡</div>
+                <h2>Faz Store</h2>
+                <p>App Repository.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 5 -->
+        <a href="https://fazinfo.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">📱</div>
+                <h2>Mobile Info</h2>
+                <p>Hardware Specs.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 6 -->
+        <a href="https://radio-one-mu.vercel.app" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">📻</div>
+                <h2>Global Radio</h2>
+                <p>Frequency Tuner.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 7 -->
+        <a href="https://zoo-tube.vercel.app" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">▶️</div>
+                <h2>Zoo Tube</h2>
+                <p>Video Protocol.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 8 -->
+        <a href="https://cyber-omega1.vercel.app/" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">🏎️</div>
+                <h2>Cyber Racing</h2>
+                <p>Simulation Engine.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 9 -->
+        <a href="https://music-player0.vercel.app" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">🎧</div>
+                <h2>Music Player</h2>
+                <p>Hi-Res Audio.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+        <!-- Tool 10 -->
+        <a href="https://libary-no1.vercel.app" target="_blank" class="q-card">
+            <div class="card-content">
+                <div class="icon-box">📚</div>
+                <h2>9th Library</h2>
+                <p>Data Archive.</p>
+            </div>
+            <div class="action-arrow">➜</div>
+        </a>
+
+    </main>
+
+    <footer>
+        <p>QUANTUM OS v12.0 // © 2024</p>
+    </footer>
+
     <script>
-        // --- 1. CLOCK & GREETING LOGIC ---
+        // --- 1. CLOCK & DATE LOGIC (12H / 24H) ---
         let is24Hour = false;
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
-        const fmtBtn = document.getElementById('fmtBtn');
-        const greetingEl = document.getElementById('greeting');
+        const btnEl = document.getElementById('fmtBtn');
 
-        function updateTime() {
+        function updateSystem() {
             const now = new Date();
             let h = now.getHours();
             let m = now.getMinutes();
             let s = now.getSeconds();
             let ampm = '';
 
-            // Greeting
-            if (h < 12) greetingEl.innerText = "Good Morning";
-            else if (h < 18) greetingEl.innerText = "Good Afternoon";
-            else greetingEl.innerText = "Good Evening";
+            // Update Date
+            dateEl.innerText = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-            // Date
-            dateEl.innerText = now.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
-
-            // Format
+            // Handle Format
             if (!is24Hour) {
                 ampm = h >= 12 ? ' PM' : ' AM';
                 h = h % 12 || 12;
             }
             
+            // Padding
             m = m < 10 ? '0' + m : m;
             s = s < 10 ? '0' + s : s;
-            
+            h = h < 10 ? '0' + h : h;
+
             clockEl.innerText = `${h}:${m}:${s}${ampm}`;
         }
 
         function toggleFormat() {
             is24Hour = !is24Hour;
-            fmtBtn.innerText = is24Hour ? "Mode: 24H" : "Mode: 12H";
-            updateTime();
+            btnEl.innerText = is24Hour ? "Time Format: 24H" : "Time Format: 12H";
+            updateSystem();
         }
 
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(updateSystem, 1000);
+        updateSystem();
 
-        // --- 2. SEARCH FOCUS EFFECT ---
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('focus', () => document.body.classList.add('search-active'));
-        searchInput.addEventListener('blur', () => document.body.classList.remove('search-active'));
+        // --- 2. 3D PARALLAX TILT + SPOTLIGHT ---
+        const cards = document.querySelectorAll('.q-card');
 
-        // Search Filter
-        searchInput.addEventListener('keyup', (e) => {
-            let term = e.target.value.toLowerCase();
-            document.querySelectorAll('.card').forEach(card => {
-                let text = card.innerText.toLowerCase();
-                card.style.display = text.includes(term) ? 'flex' : 'none';
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Spotlight Variables
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+
+                // 3D Tilt Math
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -15; // Max tilt deg
+                const rotateY = ((x - centerX) / centerX) * 15;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
             });
         });
 
-        // --- 3. DAY/NIGHT THEME TOGGLE ---
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const icon = document.querySelector('.theme-toggle');
-            icon.innerText = document.body.classList.contains('light-mode') ? '🌙' : '☀';
+        // --- 3. CUSTOM CURSOR TRAIL ---
+        const dot = document.getElementById('cursor-dot');
+        const trail = document.getElementById('cursor-trail');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot moves instantly
+            dot.style.left = `${posX}px`;
+            dot.style.top = `${posY}px`;
+
+            // Trail moves with delay (CSS transition handles smoothness)
+            trail.style.left = `${posX}px`;
+            trail.style.top = `${posY}px`;
+        });
+
+        // Hover effect for cursor
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                trail.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                trail.style.background = 'rgba(255,255,255,0.2)';
+            });
+            el.addEventListener('mouseleave', () => {
+                trail.style.transform = 'translate(-50%, -50%) scale(1)';
+                trail.style.background = 'rgba(255,255,255,0.1)';
+            });
+        });
+
+        // --- 4. BATTERY API ---
+        if('getBattery' in navigator) {
+            navigator.getBattery().then(bat => {
+                document.getElementById('battery').innerText = Math.round(bat.level * 100) + '% 🔋';
+            });
         }
     </script>
 </body>
