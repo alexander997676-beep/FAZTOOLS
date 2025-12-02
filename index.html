@@ -3,378 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAZ OS | Quantum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <title>FAZ OS | Quantum Sphere</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. CONFIGURATION --- */
+        /* --- 1. CORE VARIABLES --- */
         :root {
-            --bg-color: #030005;
-            --glass-surface: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary: #8b5cf6; /* Violet */
-            --secondary: #3b82f6; /* Blue */
-            --accent: #f43f5e; /* Rose */
+            --bg-deep: #020204;
+            --glass: rgba(20, 25, 35, 0.6);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #00f3ff; /* Default Cyan */
             --text-main: #ffffff;
-            --text-muted: #94a3b8;
+            --text-muted: #8b9bb4;
         }
+
+        /* Color Themes */
+        body.theme-purple { --primary: #bc13fe; }
+        body.theme-green { --primary: #00ff88; }
+        body.theme-orange { --primary: #ff9d00; }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-            cursor: none; /* Hide default cursor */
+            font-family: 'Rajdhani', sans-serif;
+            cursor: default;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-deep);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 50% -20%, rgba(0, 243, 255, 0.1) 0%, transparent 50%);
         }
 
-        /* --- 2. CUSTOM CURSOR & TRAIL --- */
-        .cursor-dot {
-            width: 8px; height: 8px;
-            background: white;
-            border-radius: 50%;
+        /* --- 2. 3D ROTATING SPHERE (Pure CSS) --- */
+        .sphere-container {
             position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            z-index: -1;
+            perspective: 1000px;
+            opacity: 0.3;
             pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            mix-blend-mode: difference;
         }
 
-        .cursor-trail {
-            width: 20px; height: 20px;
-            background: rgba(255, 255, 255, 0.1);
+        .ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid var(--primary);
             border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.2s;
+            box-shadow: 0 0 20px var(--primary);
         }
 
-        /* --- 3. STATUS BAR (HUD) --- */
-        .status-bar {
-            width: 90%;
+        .r1 { width: 100%; height: 100%; animation: rotate1 10s linear infinite; }
+        .r2 { width: 80%; height: 80%; animation: rotate2 15s linear infinite; border-color: rgba(255,255,255,0.3); }
+        .r3 { width: 60%; height: 60%; animation: rotate1 20s linear infinite reverse; }
+
+        @keyframes rotate1 { 0% {transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg);} 100% {transform: translate(-50%, -50%) rotateX(360deg) rotateY(360deg);} }
+        @keyframes rotate2 { 0% {transform: translate(-50%, -50%) rotateX(0deg) rotateY(90deg);} 100% {transform: translate(-50%, -50%) rotateX(360deg) rotateY(450deg);} }
+
+        /* --- 3. HEADER & HUD --- */
+        header {
+            width: 100%;
             max-width: 1200px;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: rgba(20, 20, 30, 0.6);
-            backdrop-filter: blur(20px);
-            border-radius: 50px;
-            border: 1px solid var(--glass-border);
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            animation: slideDown 1s ease;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .left-hud, .right-hud {
+        .system-logo h1 {
+            font-family: 'Orbitron';
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        .system-logo span { color: var(--primary); }
+
+        .top-controls {
             display: flex;
-            align-items: center;
             gap: 15px;
-            font-size: 0.9rem;
+            align-items: center;
+        }
+
+        .settings-btn {
+            background: transparent;
+            border: 1px solid var(--border);
             color: var(--text-muted);
-        }
-
-        .status-icon { font-size: 1rem; }
-        .live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
-
-        /* --- 4. HERO SECTION (Clock) --- */
-        header {
-            text-align: center;
-            padding: 60px 20px 40px;
-        }
-
-        .system-time {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 5rem;
-            font-weight: 700;
-            line-height: 1;
-            background: linear-gradient(180deg, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            cursor: pointer; /* Click to toggle */
-        }
-
-        .toggle-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             transition: 0.3s;
         }
-        .toggle-badge:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .settings-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary); }
 
-        .date-display { font-size: 1.1rem; margin-top: 10px; color: var(--secondary); letter-spacing: 2px; text-transform: uppercase; }
+        /* --- 4. HERO CLOCK --- */
+        .hero {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
 
-        /* --- 5. PARALLAX GRID --- */
+        .main-clock {
+            font-family: 'Orbitron';
+            font-size: 5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 30px var(--primary);
+            line-height: 1;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            letter-spacing: 4px;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .format-badge {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 6px 15px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .format-badge:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px var(--primary); }
+
+        /* --- 5. SETTINGS PANEL (Hidden) --- */
+        .settings-panel {
+            position: fixed;
+            top: 80px; right: 20px;
+            width: 250px;
+            background: rgba(10, 15, 20, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            z-index: 200;
+            transform: translateX(300px);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .settings-panel.open { transform: translateX(0); }
+
+        .panel-title { font-family: 'Orbitron'; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        
+        .color-options { display: flex; gap: 10px; margin-top: 10px; }
+        .color-dot {
+            width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;
+        }
+        .color-dot:hover { transform: scale(1.2); }
+
+        /* --- 6. QUANTUM GRID --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
-            max-width: 1200px;
-            width: 100%;
-            padding: 20px 20px 100px;
-            perspective: 1000px; /* Essential for 3D */
+            width: 90%;
+            max-width: 1400px;
+            padding-bottom: 120px;
         }
 
         .q-card {
-            background: var(--glass-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
             position: relative;
-            text-decoration: none;
             overflow: hidden;
-            transition: transform 0.1s; /* Fast for tilt */
-            transform-style: preserve-3d; /* Key for parallax */
-            min-height: 200px;
+            text-decoration: none;
+            transition: 0.3s;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-height: 180px;
         }
 
-        /* Hover Glow */
-        .q-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-            z-index: 1;
-            pointer-events: none;
+        .q-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        /* Content Parallax Layers */
-        .card-content {
-            transform: translateZ(20px); /* Moves closer to camera */
-            z-index: 2;
+        /* Audio Wave Animation inside card */
+        .wave-box {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+            opacity: 0.5;
         }
+        .bar { width: 4px; background: var(--primary); animation: wave 1s infinite ease-in-out; }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes wave { 0%, 100% {height: 5px;} 50% {height: 20px;} }
 
         .icon-box {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            display: inline-block;
-            transform: translateZ(30px); /* Moves even closer */
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
         }
 
-        .q-card h2 { color: white; font-size: 1.4rem; margin-bottom: 5px; }
-        .q-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+        .q-card h3 { color: #fff; font-size: 1.3rem; margin-bottom: 5px; }
+        .q-card p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* Animated Action Button */
-        .action-arrow {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            align-self: flex-end;
-            transform: translateZ(25px);
-            transition: 0.3s;
-            border: 1px solid transparent;
-        }
-
-        .q-card:hover .action-arrow {
-            background: #fff;
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--primary);
             color: #000;
-            transform: translateZ(40px) rotate(-45deg);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            z-index: 1000;
+            box-shadow: 0 0 20px var(--primary);
         }
+        .toast.show { opacity: 1; bottom: 50px; }
 
-        /* --- FOOTER --- */
-        footer {
-            margin-top: auto;
-            border-top: 1px solid var(--glass-border);
-            width: 100%;
-            padding: 30px;
-            text-align: center;
-            color: #444;
-        }
-
-        @keyframes slideDown { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+        /* Mobile */
         @media (max-width: 600px) {
-            .system-time { font-size: 3.5rem; }
+            .main-clock { font-size: 4rem; }
             .grid { grid-template-columns: 1fr; }
-            .status-bar { display: none; } /* Hide on very small screens */
+            .sphere-container { width: 300px; height: 300px; top: 50px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Custom Cursor -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-trail" id="cursor-trail"></div>
-
-    <!-- Status HUD -->
-    <div class="status-bar">
-        <div class="left-hud">
-            <span class="live-dot"></span>
-            <span>System Online</span>
-            <span>|</span>
-            <span id="battery">100% 🔋</span>
-        </div>
-        <div class="right-hud">
-            <span>📶 5G</span>
-            <span>📍 Pakistan</span>
-        </div>
+    <!-- 3D Background Sphere -->
+    <div class="sphere-container">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
     </div>
 
-    <!-- Header Clock -->
+    <!-- Header -->
     <header>
-        <div class="system-time" id="clock">00:00:00</div>
-        <div class="date-display" id="date">JANUARY 1, 2024</div>
-        <br>
-        <div class="toggle-badge" id="fmtBtn" onclick="toggleFormat()">Time Format: 12H</div>
+        <div class="system-logo">FAZ<span>OS</span></div>
+        <div class="top-controls">
+            <div id="battery">🔋 100%</div>
+            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+        </div>
     </header>
 
-    <!-- 3D Grid -->
-    <main class="grid" id="grid">
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="panel-title">SYSTEM THEME</div>
+        <p style="color:#aaa; font-size:0.8rem;">Select Accent Color:</p>
+        <div class="color-options">
+            <div class="color-dot" style="background: #00f3ff;" onclick="setTheme('cyan')"></div>
+            <div class="color-dot" style="background: #bc13fe;" onclick="setTheme('purple')"></div>
+            <div class="color-dot" style="background: #00ff88;" onclick="setTheme('green')"></div>
+            <div class="color-dot" style="background: #ff9d00;" onclick="setTheme('orange')"></div>
+        </div>
+        <div class="panel-title" style="margin-top:20px;">SYSTEM STATUS</div>
+        <p style="color:#0f0; font-size:0.8rem;">● Online</p>
+    </div>
+
+    <!-- Hero Clock -->
+    <div class="hero">
+        <div class="main-clock" id="clock">00:00:00</div>
+        <div class="date-display" id="date">JAN 01, 2024</div>
+        <button class="format-badge" id="fmtBtn" onclick="toggleFormat()">TIME FORMAT: 12H</button>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">Launching Application...</div>
+
+    <!-- Main Grid -->
+    <main class="grid">
 
         <!-- Tool 1 -->
-        <a href="https://galary-agency.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">🖼️</div>
-                <h2>Gallery Agency</h2>
-                <p>AI Neural Imagery.</p>
+        <a href="https://galary-agency.vercel.app/" target="_blank" class="q-card" onclick="showToast('Gallery Agency')">
+            <div class="icon-box">🖼️</div>
+            <div>
+                <h3>Gallery Agency</h3>
+                <p>AI Neural Imagery</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 2 -->
-        <a href="https://movie-land-1.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">🎬</div>
-                <h2>Movie Land</h2>
-                <p>Cinematic Stream.</p>
+        <a href="https://movie-land-1.vercel.app/" target="_blank" class="q-card" onclick="showToast('Movie Land')">
+            <div class="icon-box">🎬</div>
+            <div>
+                <h3>Movie Land</h3>
+                <p>Cinema Database</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 3 -->
-        <a href="https://ai-spech.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">📡</div>
-                <h2>Live Streams</h2>
-                <p>TV Broadcast Uplink.</p>
+        <a href="https://ai-spech.vercel.app/" target="_blank" class="q-card" onclick="showToast('Live Streams')">
+            <div class="icon-box">📡</div>
+            <div>
+                <h3>Live Streams</h3>
+                <p>Broadcast Uplink</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 4 -->
-        <a href="https://fazstore-three.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">⚡</div>
-                <h2>Faz Store</h2>
-                <p>App Repository.</p>
+        <a href="https://fazstore-three.vercel.app/" target="_blank" class="q-card" onclick="showToast('Faz Store')">
+            <div class="icon-box">⚡</div>
+            <div>
+                <h3>Faz Store</h3>
+                <p>App Repository</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 5 -->
-        <a href="https://fazinfo.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">📱</div>
-                <h2>Mobile Info</h2>
-                <p>Hardware Specs.</p>
+        <a href="https://fazinfo.vercel.app/" target="_blank" class="q-card" onclick="showToast('Mobile Info')">
+            <div class="icon-box">📱</div>
+            <div>
+                <h3>Mobile Info</h3>
+                <p>Hardware Specs</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 6 -->
-        <a href="https://radio-one-mu.vercel.app" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">📻</div>
-                <h2>Global Radio</h2>
-                <p>Frequency Tuner.</p>
+        <a href="https://radio-one-mu.vercel.app" target="_blank" class="q-card" onclick="showToast('Global Radio')">
+            <div class="icon-box">📻</div>
+            <div>
+                <h3>Global Radio</h3>
+                <p>Frequency Tuner</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 7 -->
-        <a href="https://zoo-tube.vercel.app" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">▶️</div>
-                <h2>Zoo Tube</h2>
-                <p>Video Protocol.</p>
+        <a href="https://zoo-tube.vercel.app" target="_blank" class="q-card" onclick="showToast('Zoo Tube')">
+            <div class="icon-box">▶️</div>
+            <div>
+                <h3>Zoo Tube</h3>
+                <p>Video Protocol</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 8 -->
-        <a href="https://cyber-omega1.vercel.app/" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">🏎️</div>
-                <h2>Cyber Racing</h2>
-                <p>Simulation Engine.</p>
+        <a href="https://cyber-omega1.vercel.app/" target="_blank" class="q-card" onclick="showToast('Cyber Racing')">
+            <div class="icon-box">🏎️</div>
+            <div>
+                <h3>Cyber Racing</h3>
+                <p>Simulation Engine</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 9 -->
-        <a href="https://music-player0.vercel.app" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">🎧</div>
-                <h2>Music Player</h2>
-                <p>Hi-Res Audio.</p>
+        <a href="https://music-player0.vercel.app" target="_blank" class="q-card" onclick="showToast('Music Player')">
+            <div class="icon-box">🎧</div>
+            <div>
+                <h3>Music Player</h3>
+                <p>Hi-Res Audio</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
         <!-- Tool 10 -->
-        <a href="https://libary-no1.vercel.app" target="_blank" class="q-card">
-            <div class="card-content">
-                <div class="icon-box">📚</div>
-                <h2>9th Library</h2>
-                <p>Data Archive.</p>
+        <a href="https://libary-no1.vercel.app" target="_blank" class="q-card" onclick="showToast('Library')">
+            <div class="icon-box">📚</div>
+            <div>
+                <h3>Library</h3>
+                <p>Data Archive</p>
             </div>
-            <div class="action-arrow">➜</div>
+            <div class="wave-box">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
         </a>
 
     </main>
 
-    <footer>
-        <p>QUANTUM OS v12.0 // © 2024</p>
-    </footer>
-
     <script>
-        // --- 1. CLOCK & DATE LOGIC (12H / 24H) ---
+        // --- 1. CLOCK & FORMAT ---
         let is24Hour = false;
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
-        const btnEl = document.getElementById('fmtBtn');
+        const fmtBtn = document.getElementById('fmtBtn');
 
-        function updateSystem() {
+        function updateTime() {
             const now = new Date();
             let h = now.getHours();
             let m = now.getMinutes();
             let s = now.getSeconds();
             let ampm = '';
 
-            // Update Date
             dateEl.innerText = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-            // Handle Format
             if (!is24Hour) {
                 ampm = h >= 12 ? ' PM' : ' AM';
                 h = h % 12 || 12;
             }
-            
-            // Padding
             m = m < 10 ? '0' + m : m;
             s = s < 10 ? '0' + s : s;
             h = h < 10 ? '0' + h : h;
@@ -384,73 +450,36 @@
 
         function toggleFormat() {
             is24Hour = !is24Hour;
-            btnEl.innerText = is24Hour ? "Time Format: 24H" : "Time Format: 12H";
-            updateSystem();
+            fmtBtn.innerText = is24Hour ? "TIME FORMAT: 24H" : "TIME FORMAT: 12H";
+            updateTime();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // --- 2. SETTINGS PANEL (THEME) ---
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('open');
         }
 
-        setInterval(updateSystem, 1000);
-        updateSystem();
+        function setTheme(theme) {
+            document.body.className = ''; // Reset
+            if(theme !== 'cyan') document.body.classList.add(`theme-${theme}`);
+        }
 
-        // --- 2. 3D PARALLAX TILT + SPOTLIGHT ---
-        const cards = document.querySelectorAll('.q-card');
+        // --- 3. TOAST NOTIFICATION ---
+        function showToast(appName) {
+            const toast = document.getElementById('toast');
+            toast.innerText = `ACCESSING: ${appName}...`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
 
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                // Spotlight Variables
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-
-                // 3D Tilt Math
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -15; // Max tilt deg
-                const rotateY = ((x - centerX) / centerX) * 15;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
-            });
-        });
-
-        // --- 3. CUSTOM CURSOR TRAIL ---
-        const dot = document.getElementById('cursor-dot');
-        const trail = document.getElementById('cursor-trail');
-
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-
-            // Dot moves instantly
-            dot.style.left = `${posX}px`;
-            dot.style.top = `${posY}px`;
-
-            // Trail moves with delay (CSS transition handles smoothness)
-            trail.style.left = `${posX}px`;
-            trail.style.top = `${posY}px`;
-        });
-
-        // Hover effect for cursor
-        document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                trail.style.transform = 'translate(-50%, -50%) scale(2.5)';
-                trail.style.background = 'rgba(255,255,255,0.2)';
-            });
-            el.addEventListener('mouseleave', () => {
-                trail.style.transform = 'translate(-50%, -50%) scale(1)';
-                trail.style.background = 'rgba(255,255,255,0.1)';
-            });
-        });
-
-        // --- 4. BATTERY API ---
+        // --- 4. BATTERY ---
         if('getBattery' in navigator) {
             navigator.getBattery().then(bat => {
-                document.getElementById('battery').innerText = Math.round(bat.level * 100) + '% 🔋';
+                document.getElementById('battery').innerText = '🔋 ' + Math.round(bat.level * 100) + '%';
             });
         }
     </script>
