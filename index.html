@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAZ TOOLS | NEON GENESIS</title>
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <!-- IOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#7000ff">
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- 1. CORE CONFIGURATION --- */
@@ -92,6 +99,32 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -1px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .install-btn {
+            display: none; /* Hidden by default */
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(112, 0, 255, 0.5);
+            animation: pulse-btn 2s infinite;
+        }
+
+        @keyframes pulse-btn {
+            0% { box-shadow: 0 0 0 0 rgba(112, 0, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(112, 0, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(112, 0, 255, 0); }
         }
 
         .system-status {
@@ -303,9 +336,14 @@
         <div class="brand">
             <h1>FAZ TOOLS</h1>
         </div>
-        <div class="system-status">
-            <div class="pulse-dot"></div>
-            <span id="battery">System Optimal</span>
+        <div class="header-controls">
+            <!-- PWA Install Button -->
+            <button id="installApp" class="install-btn">INSTALL APP</button>
+            
+            <div class="system-status">
+                <div class="pulse-dot"></div>
+                <span id="battery">System Optimal</span>
+            </div>
         </div>
     </header>
 
@@ -463,7 +501,7 @@
 
         <!-- 13. Money Converter (ADDED) -->
         <a href="https://faz-converter.vercel.app/" target="_blank" class="neon-card">
-            <div class="act<a ion-btn">↗</div>
+            <div class="action-btn">↗</div>
             <div class="img-wrapper">
                 <img src="https://i.supaimg.com/cca24b7f-5d22-4857-af54-8f0ce5c7e6fc.png" alt="Money Converter">
             </div>
@@ -566,6 +604,42 @@
                 document.getElementById('battery').innerText = 'Power: ' + Math.round(bat.level * 100) + '%';
             });
         }
+
+        // --- 4. PWA INSTALL LOGIC (NEW) ---
+        let deferredPrompt;
+        const installBtn = document.getElementById('installApp');
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('SW Registered'))
+            .catch(err => console.log('SW Error', err));
+        }
+
+        // Capture install event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show the install button
+            installBtn.style.display = 'block';
+        });
+
+        // Handle Button Click
+        installBtn.addEventListener('click', (e) => {
+            installBtn.style.display = 'none';
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted install');
+                    } else {
+                        console.log('User dismissed install');
+                        installBtn.style.display = 'block'; // Show again if dismissed
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
     </script>
 </body>
 </html>
